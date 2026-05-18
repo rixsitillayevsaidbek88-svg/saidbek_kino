@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | CinemaHub Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">
+    🎬 CinemaHub <span style="color:#888;font-weight:400;font-size:0.7em">Admin</span>
+  </a>
+</h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/css/admin_custom.css">
+{% endblock %}
+
+{% block footer %}
+<div id="footer">
+  <p>CinemaHub Admin Panel &copy; 2025 | <a href="/" style="color:#f5a623">Saytga o'tish →</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}{{ movie.title }} — CinemaHub{% endblock %}
+
+{% block extra_head %}
+<style>
+.movie-hero { display: grid; grid-template-columns: 280px 1fr; gap: 3rem; padding: 3rem 0; align-items: start; }
+.movie-poster { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.movie-poster img { width: 100%; display: block; }
+.movie-title { font-family: 'Montserrat', sans-serif; font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; line-height: 1.2; }
+.movie-original { color: var(--muted); font-size: 1rem; margin-bottom: 1.25rem; }
+.movie-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.meta-tag { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 500; }
+.meta-tag.gold { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.4); color: var(--gold); }
+.movie-desc { color: var(--muted); line-height: 1.8; font-size: 15px; margin-bottom: 2rem; }
+.movie-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.premium-wall { background: linear-gradient(135deg, #1a1208, #2a1c0a); border: 2px solid rgba(245,166,35,0.4); border-radius: 16px; padding: 3rem; text-align: center; margin: 2rem 0; }
+.video-player { background: #000; border-radius: 12px; overflow: hidden; margin: 2rem 0; }
+.video-player iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+.info-table { width: 100%; border-collapse: collapse; }
+.info-table tr { border-bottom: 1px solid var(--border); }
+.info-table td { padding: 12px 0; font-size: 14px; }
+.info-table td:first-child { color: var(--muted); width: 40%; }
+@media (max-width: 768px) {
+  .movie-hero { grid-template-columns: 1fr; }
+  .movie-poster { max-width: 220px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="movie-hero">
+    <div>
+      <div class="movie-poster">
+        {% if movie.poster %}
+        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+        {% else %}
+        <div class="no-poster" style="aspect-ratio:2/3">🎬</div>
+        {% endif %}
+      </div>
+
+      <!-- Actions -->
+      <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem">
+        {% if user.is_authenticated %}
+        <a href="{% url 'save_movie' movie.pk %}" class="btn {% if is_saved %}btn-outline{% else %}btn-gold{% endif %}" style="justify-content:center">
+          {% if is_saved %}💔 Saqlangandan o'chirish{% else %}❤️ Saqlash{% endif %}
+        </a>
+        <a href="{% url 'send_movie' movie.pk %}" class="btn btn-outline" style="justify-content:center">📤 Do'stga yuborish</a>
+        {% endif %}
+        {% if movie.trailer_url %}
+        <a href="{{ movie.trailer_url }}" target="_blank" class="btn btn-outline" style="justify-content:center">🎬 Treyler</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <div class="movie-title">{{ movie.title }}</div>
+      {% if movie.original_title %}<div class="movie-original">{{ movie.original_title }}</div>{% endif %}
+
+      <div class="movie-meta">
+        <span class="meta-tag">📅 {{ movie.year }}</span>
+        <span class="meta-tag">⏱ {% if movie.duration %}{{ movie.duration }} min{% else %}N/A{% endif %}</span>
+        <span class="meta-tag">⭐ {{ movie.rating }}/10</span>
+        <span class="meta-tag">👁 {{ movie.views_count }}</span>
+        {% if movie.is_premium %}
+        <span class="meta-tag gold">⭐ PREMIUM</span>
+        {% endif %}
+        <span class="meta-tag">{{ movie.quality }}</span>
+        {% for genre in movie.genres.all %}
+        <span class="meta-tag">{{ genre.name }}</span>
+        {% endfor %}
+      </div>
+
+      <p class="movie-desc">{{ movie.description }}</p>
+
+      <table class="info-table">
+        {% if movie.director %}<tr><td>Rejissor</td><td>{{ movie.director }}</td></tr>{% endif %}
+        {% if movie.actors %}<tr><td>Aktyorlar</td><td>{{ movie.actors }}</td></tr>{% endif %}
+        {% if movie.country %}<tr><td>Mamlakat</td><td>{{ movie.country }}</td></tr>{% endif %}
+      </table>
+    </div>
+  </div>
+
+  <!-- VIDEO SECTION -->
+  {% if can_watch %}
+    {% if movie.video_url %}
+    <div class="video-player">
+      <iframe src="{{ movie.get_embed_url }}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+    {% elif movie.video_file %}
+    <div class="video-player">
+      <video controls style="width:100%;aspect-ratio:16/9">
+        <source src="{{ movie.video_file.url }}">
+      </video>
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:3rem;background:var(--bg2);border-radius:12px;margin:2rem 0;color:var(--muted)">
+      Video fayli hali qo'shilmagan
+    </div>
+    {% endif %}
+  {% else %}
+    <div class="premium-wall">
+      <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+      <h2 style="font-family:'Montserrat',sans-serif;margin-bottom:1rem">Bu kino Premium a'zolar uchun</h2>
+      <p style="color:var(--muted);margin-bottom:1.5rem;max-width:400px;margin-left:auto;margin-right:auto">Barcha premium kinolarni tomosha qilish uchun Premium a'zolik xarid qiling. Narxi atigi <strong style="color:var(--gold)">12,000 so'm/oy</strong></p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'checkout' %}" class="btn btn-gold" style="font-size:16px;padding:14px 32px">⭐ Premium olish</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="btn btn-gold" style="font-size:16px;padding:14px 32px">Kirish yoki Ro'yxatdan o'tish</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- SIMILAR MOVIES -->
+  {% if similar_movies %}
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:1.5rem">O'xshash <span>kinolar</span></h2>
+    <div class="movies-grid">
+      {% for m in similar_movies %}
+      <a href="{% url 'movie_detail' m.pk %}" class="movie-card">
+        {% if m.is_premium %}<div class="premium-badge">⭐</div>{% endif %}
+        {% if m.poster %}<img src="{{ m.poster.url }}" alt="{{ m.title }}">
+        {% else %}<div class="no-poster">🎬</div>{% endif %}
+        <div class="movie-card-body">
+          <div class="movie-card-title">{{ m.title }}</div>
+          <div class="movie-card-meta">{{ m.year }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

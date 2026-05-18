@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}CinemaHub — Eng yaxshi kinolar{% endblock %}
+
+{% block extra_head %}
+<style>
+.hero {
+  background: linear-gradient(180deg, rgba(10,10,15,0) 0%, var(--bg) 100%),
+              radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.12) 0%, transparent 70%);
+  min-height: 70vh;
+  display: flex; align-items: center;
+  text-align: center;
+  padding: 5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+}
+.hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+.hero h1 { font-family: 'Montserrat', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem; }
+.hero h1 span { background: linear-gradient(135deg, var(--gold), #e8941a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 1.1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
+.hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.stats-row { display: flex; gap: 3rem; justify-content: center; margin-top: 3rem; }
+.stat { text-align: center; }
+.stat-num { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: var(--gold); }
+.stat-label { font-size: 13px; color: var(--muted); }
+
+.featured-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: none; }
+.featured-scroll::-webkit-scrollbar { display: none; }
+.featured-card { flex-shrink: 0; width: 220px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <div class="hero-content">
+    <h1>O'zbekistonning eng yaxshi<br><span>Kino platformasi</span></h1>
+    <p>Minglab kinolar, HD sifat, qulay interfeys.<br>Sevimli kinolaringizni toping, saqlang va do'stlaringizga yuboring.</p>
+    <div class="hero-btns">
+      <a href="{% url 'movie_list' %}" class="btn btn-gold" style="font-size:16px;padding:14px 32px">🎬 Kinolarni ko'rish</a>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'register' %}" class="btn btn-outline" style="padding:14px 32px">Bepul ro'yxatdan o'tish</a>
+      {% elif not user.is_premium %}
+      <a href="{% url 'premium' %}" class="btn btn-outline" style="padding:14px 32px">⭐ Premium olish</a>
+      {% endif %}
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">1000+</div><div class="stat-label">Kinolar</div></div>
+      <div class="stat"><div class="stat-num">HD</div><div class="stat-label">Sifat</div></div>
+      <div class="stat"><div class="stat-num">12K</div><div class="stat-label">Premium/oy</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  {% if featured_movies %}
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Tavsiya etilgan <span>kinolar</span></h2>
+      <a href="{% url 'movie_list' %}" class="see-all">Barchasi →</a>
+    </div>
+    <div class="featured-scroll">
+      {% for movie in featured_movies %}
+      <a href="{% url 'movie_detail' movie.pk %}" class="movie-card featured-card">
+        {% if movie.is_premium %}<div class="premium-badge">⭐ PREMIUM</div>{% endif %}
+        {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+        {% else %}<div class="no-poster">🎬</div>{% endif %}
+        <div class="movie-card-body">
+          <div class="movie-card-title">{{ movie.title }}</div>
+          <div class="movie-card-meta">{{ movie.year }} · {{ movie.quality }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Premium banner -->
+  {% if not user.is_authenticated or not user.is_premium %}
+  <div style="background: linear-gradient(135deg, #1a1208, #2a1c0a); border: 1px solid rgba(245,166,35,0.3); border-radius: 16px; padding: 2.5rem; margin: 2rem 0; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
+    <div>
+      <div style="font-family:'Montserrat',sans-serif; font-size:1.5rem; font-weight:800; margin-bottom:8px">⭐ Premium a'zolikni sinab ko'ring</div>
+      <div style="color:var(--muted); max-width:500px">Premium kinolar, reklama yo'q, HD sifat va ko'p imkoniyatlar — barchasi atigi <strong style="color:var(--gold)">12,000 so'm/oy</strong></div>
+    </div>
+    <a href="{% url 'premium' %}" class="btn btn-gold" style="padding:14px 28px;font-size:15px;flex-shrink:0">Hozir olish →</a>
+  </div>
+  {% endif %}
+
+  {% if premium_movies %}
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">⭐ <span>Premium</span> kinolar</h2>
+      <a href="{% url 'movie_list' %}?type=premium" class="see-all">Barchasi →</a>
+    </div>
+    <div class="movies-grid">
+      {% for movie in premium_movies %}
+      <a href="{% url 'movie_detail' movie.pk %}" class="movie-card">
+        <div class="premium-badge">⭐ PREMIUM</div>
+        {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+        {% else %}<div class="no-poster">🎬</div>{% endif %}
+        <div class="movie-card-body">
+          <div class="movie-card-title">{{ movie.title }}</div>
+          <div class="movie-card-meta">{{ movie.year }} · ⭐ {{ movie.rating }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">🆕 Yangi qo'shilgan <span>kinolar</span></h2>
+      <a href="{% url 'movie_list' %}" class="see-all">Barchasi →</a>
+    </div>
+    {% if latest_movies %}
+    <div class="movies-grid">
+      {% for movie in latest_movies %}
+      <a href="{% url 'movie_detail' movie.pk %}" class="movie-card">
+        {% if movie.is_premium %}<div class="premium-badge">⭐</div>{% endif %}
+        {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+        {% else %}<div class="no-poster">🎬</div>{% endif %}
+        <div class="movie-card-body">
+          <div class="movie-card-title">{{ movie.title }}</div>
+          <div class="movie-card-meta">{{ movie.year }} · {{ movie.quality }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:4rem;color:var(--muted)">
+      <div style="font-size:4rem;margin-bottom:1rem">🎬</div>
+      <p>Hali kino qo'shilmagan. Admin paneldan kinolar qo'shing.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

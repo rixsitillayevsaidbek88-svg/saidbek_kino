@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Xarid qilish — CinemaHub{% endblock %}
+
+{% block extra_head %}
+<style>
+.card-input { position: relative; }
+.card-input input { font-family: 'Courier New', monospace; letter-spacing: 2px; }
+.card-preview { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+.card-preview::before { content: '●●●●'; position: absolute; top: 50%; right: 2rem; transform: translateY(-50%); color: rgba(255,255,255,0.1); font-size: 3rem; letter-spacing: -5px; }
+.card-chip { width: 50px; height: 36px; background: linear-gradient(135deg, var(--gold), #c87a1a); border-radius: 6px; margin-bottom: 1rem; }
+.card-number-preview { font-family: 'Courier New', monospace; font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 1rem; color: rgba(255,255,255,0.9); }
+.card-name-preview { font-size: 14px; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 3rem auto; padding: 0 2rem;">
+  <h1 style="font-family:'Montserrat',sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">💳 Xarid qilish</h1>
+  <p style="color: var(--muted); margin-bottom: 2rem;">Premium a'zolik — 30 kun · <strong style="color: var(--gold)">{{ price|floatformat:0 }} so'm</strong></p>
+
+  <!-- Card preview -->
+  <div class="card-preview">
+    <div class="card-chip"></div>
+    <div class="card-number-preview" id="card-number-display">•••• •••• •••• ••••</div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div class="card-name-preview" id="card-name-display">TO'LOV EGASI</div>
+      <div style="font-family:'Courier New',monospace; color: rgba(255,255,255,0.7); font-size:14px" id="card-expiry-display">MM/YY</div>
+    </div>
+  </div>
+
+  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem;">
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Karta raqami</label>
+        <div class="card-input">
+          <input type="text" name="card_number" class="form-input" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Karta egasi ismi</label>
+        <input type="text" name="card_name" class="form-input" id="card-name" placeholder="SAIDBEK RIXSITILLAYEV" required style="text-transform:uppercase">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">Muddati</label>
+          <input type="text" name="card_expiry" class="form-input" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input type="password" name="card_cvv" class="form-input" placeholder="•••" maxlength="3" required>
+        </div>
+      </div>
+
+      <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 14px; margin-bottom: 1.5rem; font-size: 13px; color: var(--muted);">
+        🔒 To'lov ma'lumotlaringiz xavfsiz shifrlangan. SSL protokoli orqali himoyalangan.
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;">
+        <span style="font-weight: 600;">Premium a'zolik (30 kun)</span>
+        <span style="font-family:'Montserrat',sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--gold);">{{ price|floatformat:0 }} so'm</span>
+      </div>
+
+      <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px;">
+        💳 To'lov qilish — {{ price|floatformat:0 }} so'm
+      </button>
+      <a href="{% url 'premium' %}" style="display: block; text-align: center; margin-top: 1rem; color: var(--muted); font-size: 14px; text-decoration: none;">Bekor qilish</a>
+    </form>
+  </div>
+</div>
+
+<script>
+const numInput = document.getElementById('card-number');
+const nameInput = document.getElementById('card-name');
+const expiryInput = document.getElementById('card-expiry');
+const numDisplay = document.getElementById('card-number-display');
+const nameDisplay = document.getElementById('card-name-display');
+const expiryDisplay = document.getElementById('card-expiry-display');
+
+numInput.addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').slice(0,16);
+  this.value = v.replace(/(.{4})/g,'$1 ').trim();
+  numDisplay.textContent = (v + '????????????????').slice(0,16).replace(/(.{4})/g,'$1 ').trim().replace(/[0-9]/g,(c,i) => i<v.length?c:'•');
+});
+
+nameInput.addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+  nameDisplay.textContent = this.value || "TO'LOV EGASI";
+});
+
+expiryInput.addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'');
+  if(v.length>=3) v = v.slice(0,2)+'/'+v.slice(2,4);
+  this.value = v;
+  expiryDisplay.textContent = v || 'MM/YY';
+});
+</script>
+{% endblock %}

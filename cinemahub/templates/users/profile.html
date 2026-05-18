@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Profilim — CinemaHub{% endblock %}
+
+{% block extra_head %}
+<style>
+.profile-hero { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+.avatar-big { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #c87a1a); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: #000; flex-shrink: 0; overflow: hidden; }
+.avatar-big img { width: 100%; height: 100%; object-fit: cover; }
+.premium-card { background: linear-gradient(135deg, #1a1208, #2a1c0a); border: 1px solid rgba(245,166,35,0.4); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.saved-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem;">
+
+  <div class="profile-hero">
+    <div class="avatar-big">
+      {% if user.avatar %}
+      <img src="{{ user.avatar.url }}" alt="">
+      {% else %}
+      {{ user.username|first|upper }}
+      {% endif %}
+    </div>
+    <div style="flex: 1;">
+      <h1 style="font-family:'Montserrat',sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 4px;">
+        {{ user.get_full_name|default:user.username }}
+        {% if user.is_premium %}<span style="color:var(--gold); font-size: 1.2rem;">⭐</span>{% endif %}
+      </h1>
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">@{{ user.username }}</p>
+      <p style="color: var(--muted); font-size: 14px;">📧 {{ user.email }}</p>
+      {% if user.phone %}<p style="color: var(--muted); font-size: 14px;">📱 {{ user.phone }}</p>{% endif %}
+      {% if user.bio %}<p style="color: var(--text); margin-top: 0.75rem; font-size: 14px;">{{ user.bio }}</p>{% endif %}
+    </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="{% url 'profile_edit' %}" class="btn btn-outline btn-sm">✏️ Tahrirlash</a>
+      <a href="{% url 'logout' %}" class="btn btn-outline btn-sm" style="border-color: var(--red); color: var(--red);">Chiqish</a>
+    </div>
+  </div>
+
+  <!-- Premium status -->
+  {% if user.is_premium %}
+  <div class="premium-card">
+    <div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--gold); margin-bottom: 4px;">⭐ Premium a'zo</div>
+      {% if user.premium_until %}
+      <div style="color: var(--muted); font-size: 14px;">Muddati: <strong style="color: var(--text)">{{ user.premium_until|date:"d.m.Y" }}</strong> gacha</div>
+      {% endif %}
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">Barcha premium kinolar ochiq</div>
+      <a href="{% url 'movie_list' %}?type=premium" class="btn btn-gold btn-sm">🎬 Kinolarni ko'rish</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="premium-card">
+    <div>
+      <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 4px;">Premium a'zolik yo'q</div>
+      <div style="color: var(--muted); font-size: 14px;">Barcha premium kinolar uchun — atigi 12,000 so'm/oy</div>
+    </div>
+    <a href="{% url 'checkout' %}" class="btn btn-gold">⭐ Premium olish</a>
+  </div>
+  {% endif %}
+
+  <!-- Saved movies -->
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom: 1.5rem;">❤️ Saqlangan <span>kinolar</span></h2>
+    {% if saved_movies %}
+    <div class="saved-grid">
+      {% for movie in saved_movies %}
+      <div style="position: relative;">
+        <a href="{% url 'movie_detail' movie.pk %}" class="movie-card">
+          {% if movie.is_premium %}<div class="premium-badge">⭐</div>{% endif %}
+          {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+          {% else %}<div class="no-poster">🎬</div>{% endif %}
+          <div class="movie-card-body">
+            <div class="movie-card-title">{{ movie.title }}</div>
+            <div class="movie-card-meta">{{ movie.year }}</div>
+          </div>
+        </a>
+        <a href="{% url 'save_movie' movie.pk %}" style="position: absolute; top: 46px; right: 8px; background: rgba(0,0,0,0.7); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none;" title="O'chirish">💔</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background: var(--bg2); border-radius: 12px; border: 1px solid var(--border);">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">❤️</div>
+      <p style="color: var(--muted);">Hali hech qanday kino saqlanmagan.<br>Yoqtirgan kinolaringizni saqlang!</p>
+      <a href="{% url 'movie_list' %}" class="btn btn-gold" style="margin-top: 1.25rem;">🎬 Kinolarni ko'rish</a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

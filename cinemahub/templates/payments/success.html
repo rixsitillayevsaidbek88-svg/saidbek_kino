@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Muvaffaqiyatli! — CinemaHub{% endblock %}
+
+{% block content %}
+<div style="min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+  <div style="max-width: 500px;">
+    <div style="font-size: 5rem; margin-bottom: 1.5rem; animation: pop 0.5s ease;">🎉</div>
+    <h1 style="font-family:'Montserrat',sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--gold);">Tabriklaymiz!</h1>
+    <p style="font-size: 1.1rem; margin-bottom: 0.75rem;">Premium a'zolik muvaffaqiyatli faollashtirildi!</p>
+    <p style="color: var(--muted); margin-bottom: 2.5rem;">Endi barcha premium kinolarni tomosha qilishingiz mumkin. 30 kun davomida cheksiz zavq oling!</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="{% url 'movie_list' %}?type=premium" class="btn btn-gold" style="padding: 14px 28px; font-size: 16px;">🎬 Premium kinolar</a>
+      <a href="{% url 'profile' %}" class="btn btn-outline" style="padding: 14px 28px; font-size: 16px;">👤 Profilim</a>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes pop { 0%{transform:scale(0.5);opacity:0} 80%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+</style>
+{% endblock %}

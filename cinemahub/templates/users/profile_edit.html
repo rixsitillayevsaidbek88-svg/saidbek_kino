@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Profilni tahrirlash — CinemaHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 3rem auto; padding: 0 2rem;">
+  <h1 style="font-family:'Montserrat',sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">✏️ Profilni tahrirlash</h1>
+  <p style="color: var(--muted); margin-bottom: 2rem;">Ma'lumotlaringizni yangilang</p>
+
+  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem;">
+    <form method="POST" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% for e in field.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button type="submit" class="btn btn-gold" style="flex: 1; justify-content: center; padding: 14px;">Saqlash ✅</button>
+        <a href="{% url 'profile' %}" class="btn btn-outline" style="flex: 1; justify-content: center; padding: 14px;">Bekor qilish</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

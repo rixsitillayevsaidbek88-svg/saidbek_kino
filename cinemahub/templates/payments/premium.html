@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Premium a'zolik — CinemaHub{% endblock %}
+
+{% block extra_head %}
+<style>
+.premium-hero { text-align: center; padding: 4rem 2rem; background: radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.15) 0%, transparent 70%); }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+.feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; text-align: center; }
+.feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.feature-title { font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 0.5rem; }
+.feature-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.price-box { background: linear-gradient(135deg, #1a1208, #2a1c0a); border: 2px solid rgba(245,166,35,0.5); border-radius: 20px; padding: 3rem; text-align: center; max-width: 400px; margin: 0 auto 3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="premium-hero">
+  <div style="font-size: 4rem; margin-bottom: 1rem;">⭐</div>
+  <h1 style="font-family:'Montserrat',sans-serif; font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
+    {% if user.is_premium %}Siz Premium a'zoсиз!{% else %}Premium a'zolik{% endif %}
+  </h1>
+  <p style="color: var(--muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto;">
+    {% if user.is_premium %}Barcha premium kinolar sizga ochiq. Yaxshi tomosha!{% else %}Barcha premium kinolarni tomosha qiling — atigi 12,000 so'm oyiga{% endif %}
+  </p>
+</div>
+
+<div class="container">
+
+  {% if user.is_authenticated and user.is_premium %}
+  <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05)); border: 1px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+    <div style="font-size: 2rem; margin-bottom: 0.75rem;">🎉</div>
+    <h2 style="font-family:'Montserrat',sans-serif; color: var(--green); margin-bottom: 0.5rem;">Premium faol!</h2>
+    {% if user.premium_until %}
+    <p style="color: var(--muted);">Muddati: <strong style="color: var(--text)">{{ user.premium_until|date:"d.m.Y H:i" }}</strong> gacha</p>
+    {% endif %}
+    <a href="{% url 'movie_list' %}?type=premium" class="btn btn-gold" style="margin-top: 1.25rem;">🎬 Premium kinolar →</a>
+  </div>
+  {% endif %}
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎬</div>
+      <div class="feature-title">1000+ Premium kino</div>
+      <div class="feature-desc">Eng yangi va sifatli kinolarni birinchi bo'lib tomosha qiling</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📺</div>
+      <div class="feature-title">4K Ultra HD</div>
+      <div class="feature-desc">Eng yuqori sifatda, kristal aniq tasvirda zavq oling</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚫</div>
+      <div class="feature-title">Reklama yo'q</div>
+      <div class="feature-desc">Hech qanday reklama, uzilishsiz tomosha qiling</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📥</div>
+      <div class="feature-title">Offline saqlash</div>
+      <div class="feature-desc">Kinolarni yuklab oling va internetsiz tomosha qiling</div>
+    </div>
+  </div>
+
+  {% if not user.is_premium %}
+  <div class="price-box">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">⭐</div>
+    <div style="font-family:'Montserrat',sans-serif; font-size: 3rem; font-weight: 800; color: var(--gold);">12 000</div>
+    <div style="color: var(--muted); margin-bottom: 1.5rem; font-size: 1.1rem;">so'm / oyiga</div>
+    <ul style="text-align: left; color: var(--muted); font-size: 14px; list-style: none; margin-bottom: 2rem;">
+      <li style="padding: 6px 0; border-bottom: 1px solid var(--border);">✅ Barcha premium kinolar</li>
+      <li style="padding: 6px 0; border-bottom: 1px solid var(--border);">✅ 4K sifat</li>
+      <li style="padding: 6px 0; border-bottom: 1px solid var(--border);">✅ Reklama yo'q</li>
+      <li style="padding: 6px 0;">✅ 30 kun muddatiga</li>
+    </ul>
+    {% if user.is_authenticated %}
+    <a href="{% url 'checkout' %}" class="btn btn-gold" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px;">Hozir xarid qilish →</a>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-gold" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px;">Kirish / Ro'yxatdan o'tish</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if payments %}
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom: 1.5rem;">📋 To'lov tarixi</h2>
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+      {% for p in payments %}
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; {% if not forloop.last %}border-bottom: 1px solid var(--border);{% endif %}">
+        <div>
+          <div style="font-weight: 600; margin-bottom: 2px;">{{ p.amount|floatformat:0 }} so'm</div>
+          <div style="font-size: 13px; color: var(--muted);">{{ p.created_at|date:"d.m.Y H:i" }} · **** {{ p.card_last4 }}</div>
+        </div>
+        <div style="
+          padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+          {% if p.status == 'success' %}background: rgba(16,185,129,0.15); color: var(--green);
+          {% elif p.status == 'pending' %}background: rgba(245,166,35,0.15); color: var(--gold);
+          {% else %}background: rgba(229,62,62,0.15); color: var(--red);{% endif %}">
+          {% if p.status == 'success' %}✅ Muvaffaqiyatli
+          {% elif p.status == 'pending' %}⏳ Kutilmoqda
+          {% else %}❌ Bekor{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

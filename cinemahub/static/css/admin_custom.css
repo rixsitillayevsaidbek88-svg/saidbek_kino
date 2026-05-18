@@ -1,0 +1,54 @@
+/* CinemaHub Admin Custom Styles */
+:root {
+  --primary: #f5a623;
+  --primary-fg: #000;
+  --header-color: #fff;
+  --header-branding-color: #f5a623;
+  --header-bg: #0a0a0f;
+  --header-link-color: #ccc;
+  --breadcrumbs-fg: #ccc;
+  --breadcrumbs-link-fg: #f5a623;
+  --breadcrumbs-bg: #111118;
+  --link-fg: #f5a623;
+  --link-hover-fg: #e8941a;
+  --sidebar-width: 220px;
+  --body-fg: #e0e0e0;
+  --body-bg: #0d0d14;
+  --body-quiet-color: #9a9a9a;
+  --body-loud-color: #fff;
+  --darkened-bg: #111118;
+  --selected-bg: #1a1a24;
+  --selected-row: #1a1208;
+  --button-fg: #000;
+  --button-bg: #f5a623;
+  --button-hover-bg: #e8941a;
+  --default-button-bg: #f5a623;
+  --close-button-bg: #444;
+  --object-tools-fg: #000;
+  --object-tools-bg: #f5a623;
+  --input-bg: #1a1a24;
+  --input-border: rgba(255,255,255,0.15);
+  --border-color: rgba(255,255,255,0.1);
+}
+
+body { background: #0d0d14; color: #e0e0e0; }
+#header { background: #0a0a0f; border-bottom: 1px solid rgba(255,255,255,0.1); }
+#branding h1, #branding h1 a { color: #f5a623; font-size: 1.4rem; }
+.module h2, .module caption { background: #1a1a24; color: #f5a623; }
+.module { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; }
+.dashboard #content { background: #0d0d14; }
+tr.even { background: #111118; }
+tr.odd { background: #0d0d14; }
+tr:hover td { background: #1a1208 !important; }
+.results th { background: #1a1a24; }
+.action-counter { color: #f5a623; }
+.button, input[type=submit], input[type=button], .submit-row input, a.button { background: #f5a623; color: #000; border-radius: 6px; border: none; font-weight: 700; }
+.button:hover { background: #e8941a; }
+.deletelink-box a { background: #c53030; }
+input[type=text], input[type=password], input[type=email], textarea, select { background: #1a1a24; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #e0e0e0; }
+.changelist-filter { background: #111118; border-left: 1px solid rgba(255,255,255,0.1); }
+.changelist-filter h2 { background: #1a1a24; color: #f5a623; border-radius: 6px 6px 0 0; }
+a { color: #f5a623; }
+a:hover { color: #e8941a; }
+#nav-sidebar { background: #0d0d14; }
+.toggle-nav-sidebar { background: #0a0a0f; }

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}CinemaHub{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a24;
+  --card: #15151f;
+  --border: rgba(255,255,255,0.08);
+  --gold: #f5a623;
+  --gold2: #e8941a;
+  --red: #e53e3e;
+  --blue: #3b82f6;
+  --green: #10b981;
+  --text: #f0f0f5;
+  --muted: #8b8b99;
+  --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+/* NAVBAR */
+nav {
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 2rem;
+}
+.nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; height: 68px; }
+.logo { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--gold); text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; }
+.logo span { color: var(--text); }
+.nav-search { flex: 1; max-width: 400px; position: relative; }
+.nav-search input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px 8px 40px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
+.nav-search input:focus { border-color: var(--gold); }
+.nav-search::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+.nav-links { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; white-space: nowrap; }
+.nav-links a:hover { color: var(--text); }
+.nav-links a.active { color: var(--gold); }
+.btn-premium { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000 !important; padding: 8px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+.btn-login { background: var(--bg3); border: 1px solid var(--border); color: var(--text) !important; padding: 8px 18px; border-radius: 8px; }
+.avatar-link { display: flex; align-items: center; gap: 8px; }
+.avatar-circle { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #c87a1a); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #000; }
+
+/* MAIN */
+.container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+/* MESSAGES */
+.messages { padding: 1rem 2rem; max-width: 1400px; margin: 0 auto; }
+.message { padding: 12px 20px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+.message.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+.message.error { background: rgba(229,62,62,0.15); border: 1px solid rgba(229,62,62,0.3); color: #fc8181; }
+.message.info { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+.message.warning { background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3); color: #fcd34d; }
+
+/* CARDS */
+.movie-card { background: var(--card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); transition: transform 0.2s, border-color 0.2s; position: relative; display: block; text-decoration: none; }
+.movie-card:hover { transform: translateY(-4px); border-color: rgba(245,166,35,0.3); }
+.movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+.movie-card-body { padding: 12px; }
+.movie-card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Montserrat', sans-serif; }
+.movie-card-meta { font-size: 12px; color: var(--muted); }
+.premium-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+.no-poster { width: 100%; aspect-ratio: 2/3; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+
+/* GRID */
+.movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.25rem; }
+
+/* SECTIONS */
+.section { padding: 3rem 0; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.section-title { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 700; }
+.section-title span { color: var(--gold); }
+.see-all { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 500; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; }
+.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; }
+.btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-red { background: var(--red); color: #fff; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+
+/* FORM */
+.form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; font-family: 'Inter', sans-serif; }
+.form-input:focus { border-color: var(--gold); }
+.form-group { margin-bottom: 1.25rem; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-error { color: #fc8181; font-size: 12px; margin-top: 4px; }
+
+/* FOOTER */
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 13px; margin-top: 4rem; }
+footer a { color: var(--gold); text-decoration: none; }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="logo">Cinema<span>Hub</span></a>
+    <form class="nav-search" action="{% url 'movie_list' %}" method="GET">
+      <input type="search" name="q" placeholder="Kino qidirish..." value="{{ request.GET.q }}">
+    </form>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">Bosh sahifa</a>
+      <a href="{% url 'movie_list' %}">Kinolar</a>
+      <a href="{% url 'premium' %}" class="btn-premium">⭐ Premium</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="avatar-link" style="text-decoration:none">
+          <div class="avatar-circle">{{ user.username|first|upper }}</div>
+        </a>
+        <a href="{% url 'logout' %}">Chiqish</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn-login">Kirish</a>
+        <a href="{% url 'register' %}" class="btn" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 18px;font-size:13px">Ro'yxat</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="message {{ message.tags }}">
+    {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% elif message.tags == 'info' %}ℹ️{% else %}⚠️{% endif %}
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <p>© 2026 CinemaHub — O'zbekistonning eng yaxshi kino platformasi 🎬</p>
+  <p style="margin-top:8px"><a href="{% url 'premium' %}">Premium a'zolik</a> · <a href="{% url 'movie_list' %}">Barcha kinolar</a></p>
+</footer>
+
+</body>
+</html>

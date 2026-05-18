@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Do'stga yuborish — CinemaHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 3rem auto; padding: 0 2rem;">
+  <h1 style="font-family:'Montserrat',sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">📤 Do'stga yuborish</h1>
+  <p style="color: var(--muted); margin-bottom: 2rem;">
+    <strong style="color: var(--gold)">{{ movie.title }}</strong> kinoni do'stingizga ulashing
+  </p>
+
+  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem;">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Do'stingizni tanlang</label>
+        <select name="recipient_id" class="form-input" required style="cursor:pointer">
+          <option value="">— Foydalanuvchi tanlang —</option>
+          {% for u in users %}
+          <option value="{{ u.pk }}">{{ u.username }}{% if u.get_full_name %} ({{ u.get_full_name }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button type="submit" class="btn btn-gold" style="flex: 1; justify-content: center; padding: 14px;">📤 Yuborish</button>
+        <a href="{% url 'movie_detail' movie.pk %}" class="btn btn-outline" style="flex: 1; justify-content: center; padding: 14px;">Bekor</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
